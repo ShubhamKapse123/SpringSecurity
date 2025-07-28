@@ -1,5 +1,7 @@
 package com.springdemo.security.config;
 
+import com.springdemo.security.service.CustomUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,6 +31,8 @@ import javax.servlet.http.Cookie;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private CustomUserService customUserService;
     /**
      * Configures HTTP security for the application.
      *
@@ -58,14 +62,15 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("TestUser")
-                .password(passwordEncoder().encode("123**"))
-                .roles("NORMAL");
-        auth.inMemoryAuthentication()
-                .withUser("AdminUser")
-                .password(passwordEncoder().encode("admin@123"))
-                .roles("ADMIN");
+//        auth.inMemoryAuthentication()
+//                .withUser("TestUser")
+//                .password(passwordEncoder().encode("123**"))
+//                .roles("NORMAL");
+//        auth.inMemoryAuthentication()
+//                .withUser("AdminUser")
+//                .password(passwordEncoder().encode("admin@123"))
+//                .roles("ADMIN");
+        auth.userDetailsService(customUserService).passwordEncoder(passwordEncoder());
     }
 
     /**

@@ -9,6 +9,10 @@ import java.util.HashSet;
 
 
 public class CustomUserDetails implements UserDetails {
+    public CustomUserDetails(User user) {
+        this.user = user;
+    }
+
     User user= new User();
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
