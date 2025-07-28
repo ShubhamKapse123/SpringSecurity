@@ -4,16 +4,19 @@ import com.springdemo.security.model.User;
 import com.springdemo.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * REST controller for handling user-related endpoints.
+ * REST controller for managing users.
  *
  * <p>
- * Annotated with {@link RestController} to indicate that this class handles REST API requests.
- * {@link RequestMapping} sets the base URL path for all endpoints in this controller.
+ * Updates as of 2025-07-28:
+ * - Added @PreAuthorize annotations for endpoint-level access control
+ * - Most endpoints are now public (permitAll)
+ * - Only update and delete require ADMIN role
  * </p>
  */
 @RestController
@@ -41,6 +44,7 @@ public class UserController {
      * @return list of User objects
      */
     @GetMapping
+    @PreAuthorize("permitAll")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
@@ -53,6 +57,7 @@ public class UserController {
      * @return ResponseEntity containing the User object, or a 404 response if not found
      */
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         if (user == null) {
@@ -69,6 +74,7 @@ public class UserController {
      * @return the created User object
      */
     @PostMapping
+    @PreAuthorize("permitAll")
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
@@ -82,6 +88,7 @@ public class UserController {
      * @return ResponseEntity containing the updated User object, or a 404 response if not found
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         User updated = userService.updateUser(id, user);
         if (updated == null) {
@@ -97,6 +104,7 @@ public class UserController {
      * @param id the ID of the user to be deleted
      * @return ResponseEntity with a 204 status code if deleted successfully, or a 404 response if not found
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         boolean deleted = userService.deleteUser(id);

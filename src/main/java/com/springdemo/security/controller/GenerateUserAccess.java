@@ -1,15 +1,16 @@
 package com.springdemo.security.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * REST controller for generating user access credentials.
+ * Controller for generating user credentials and access endpoints.
  *
  * <p>
- * Annotated with {@link RestController} to indicate that this class handles REST API requests.
- * {@link RequestMapping} sets the base URL path for all endpoints in this controller.
+ * Updates as of 2025-07-28:
+ * - Added @PreAuthorize("permitAll") to allow public access to credential generation endpoint
  * </p>
  */
 @RestController
@@ -22,6 +23,7 @@ public class GenerateUserAccess {
      * @return String containing generated username and password
      */
     @GetMapping("basicAuth")
+    @PreAuthorize("permitAll")
     public String generateUserPass() {
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
         StringBuilder sb = new StringBuilder();

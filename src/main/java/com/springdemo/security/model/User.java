@@ -1,5 +1,7 @@
 package com.springdemo.security.model;
 
+import javax.persistence.*;
+
 /**
  * Model class representing a user entity.
  *
@@ -7,10 +9,17 @@ package com.springdemo.security.model;
  * This class can be used to store user-related data such as username, password, and roles.
  * </p>
  */
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, unique = true)
     private String username;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String roles;
 
     public User() {}

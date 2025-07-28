@@ -4,23 +4,30 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
+import javax.servlet.http.Cookie;
 
 /**
  * Configuration class for Spring Security settings.
  *
  * <p>
- * Annotated with {@link Configuration} to indicate that this class contains Spring beans definition.
- * {@link EnableWebSecurity} enables Spring Security’s web security support.
- * Extends {@link WebSecurityConfigurerAdapter} to customize security configuration.
+ * Updates as of 2025-07-28:
+ * - Enabled method-level security with @EnableGlobalMethodSecurity(prePostEnabled = true)
+ * - Disabled CSRF protection for all endpoints
+ * - Public access allowed for /generateAccess/** and /users/** endpoints
+ * - All other endpoints require authentication
  * </p>
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * Configures HTTP security for the application.
@@ -31,11 +38,15 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
+                //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/generateAccess/**").hasRole("NORMAL")
+                .antMatchers( "/generateAccess/**").permitAll()
+                .antMatchers( "/users/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
+                //.formLogin()
                 .httpBasic();
     }
 
